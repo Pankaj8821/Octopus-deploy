@@ -1,6 +1,6 @@
 name: Build and Deploy NGINX with Octopus
 
-on:
+on: 
   push:
     branches:
       - main
