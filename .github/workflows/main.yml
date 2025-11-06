@@ -9,7 +9,6 @@ on:
 env:
   IMAGE_NAME: pyadav8821/nginx-octopus-demo
   OCTOPUS_SPACE: "Default"
-  OCTOPUS_PROJECT: "NginxDemo"
   OCTOPUS_ENVIRONMENT: "Production"
 
 jobs:
