@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  IMAGE_NAME: pyadv8821/nginx-octopus-demo
+  IMAGE_NAME: pyadav8821/nginx-octopus
   OCTOPUS_SPACE: "Default"
   OCTOPUS_ENVIRONMENT: "Production"
 
