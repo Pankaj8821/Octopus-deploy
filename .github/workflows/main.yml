@@ -7,8 +7,8 @@ on:
 env:
   IMAGE_NAME: pyadav8821/nginx-octopus
   OCTOPUS_SPACE: "Default"
-  OCTOPUS_PROJECT: "nginx"
-  OCTOPUS_ENVIRONMENT: "Development"
+  OCTOPUS_PROJECT: "nginx-prod"
+  OCTOPUS_ENVIRONMENT: "Production"
 
 jobs:
   build-push-deploy:
