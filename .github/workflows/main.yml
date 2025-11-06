@@ -46,7 +46,7 @@ jobs:
           project: ${{ env.OCTOPUS_PROJECT }}
           release_number: 0.0.${{ github.run_number }}
           # This references the package used in your Octopus step
-          packages: Run Nginx Container:${{ github.sha }}
+          packages: Run Nginx Container:latest
       # Deploy the created release to your environment
       - name: Deploy Release to Environment
         uses: OctopusDeploy/deploy-release-action@v3
