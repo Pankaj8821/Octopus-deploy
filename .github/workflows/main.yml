@@ -44,7 +44,7 @@ jobs:
           server: ${{ secrets.OCTOPUS_SERVER }}
           space: ${{ env.OCTOPUS_SPACE }}
           project: ${{ env.OCTOPUS_PROJECT }}
-          release_number: ${{ github.run_id }}
+          release_number: 0.0.${{ github.run_number }}
           # This references the package used in your Octopus step
           packages: Run Nginx Container:${{ github.sha }}
       # Deploy the created release to your environment
@@ -55,7 +55,7 @@ jobs:
           server: ${{ secrets.OCTOPUS_SERVER }}
           space: ${{ env.OCTOPUS_SPACE }}
           project: ${{ env.OCTOPUS_PROJECT }}
-          release_number: ${{ github.run_id }}
+          release_number: 0.0.${{ github.run_number }}
           environments: ${{ env.OCTOPUS_ENVIRONMENT }}
 
 
