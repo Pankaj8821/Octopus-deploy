@@ -41,7 +41,7 @@ jobs:
         with:
           api_key: ${{ secrets.OCTOPUS_API_KEY }}
           server: ${{ secrets.OCTOPUS_SERVER }}
-          space: "Default"
+          space: ${{ env.OCTOPUS_SPACE }}
           project: "nginx"
           release_number: ${{ github.run_id }}
           package_version: ${{ github.sha }}
