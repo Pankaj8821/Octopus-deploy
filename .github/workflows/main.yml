@@ -1,6 +1,6 @@
 name: Build and Deploy NGINX with Octopus
 
-on: 
+on:
   push:
     branches:
       - main
@@ -8,6 +8,7 @@ on:
 env:
   IMAGE_NAME: pyadav8821/nginx-octopus
   OCTOPUS_SPACE: "Default"
+  OCTOPUS_PROJECT: "nginx"
   OCTOPUS_ENVIRONMENT: "Development"
 
 jobs:
@@ -15,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout source
         uses: actions/checkout@v4
 
       - name: Log in to Docker Hub
@@ -24,17 +25,17 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Docker Image
+      - name: Build Docker image
         run: |
           docker build -t $IMAGE_NAME:${{ github.sha }} .
           docker tag $IMAGE_NAME:${{ github.sha }} $IMAGE_NAME:latest
 
-      - name: Push Docker Image
+      - name: Push Docker image
         run: |
           docker push $IMAGE_NAME:${{ github.sha }}
           docker push $IMAGE_NAME:latest
 
-      # Step 1️⃣ — Create Octopus release
+      # Create Octopus Release referencing the Docker image package
       - name: Create Octopus Release
         id: create_release
         uses: OctopusDeploy/create-release-action@v3
@@ -42,13 +43,19 @@ jobs:
           api_key: ${{ secrets.OCTOPUS_API_KEY }}
           server: ${{ secrets.OCTOPUS_SERVER }}
           space: ${{ env.OCTOPUS_SPACE }}
-          project: "nginx"
+          project: ${{ env.OCTOPUS_PROJECT }}
           release_number: ${{ github.run_id }}
-          package_version: ${{ github.sha }}
-          # ignore_existing: true ensures new releases always work
-          ignore_existing: true
+          # This references the package used in your Octopus step
+          packages: |
+            [
+              {
+                "stepName": "Run Nginx Container",
+                "version": "${{ github.sha }}",
+                "id": "pyadav8821/nginx-octopus"
+              }
+            ]
 
-      # Step 2️⃣ — Deploy the release
+      # Deploy the created release to your environment
       - name: Deploy Release to Environment
         uses: OctopusDeploy/deploy-release-action@v3
         with:
@@ -61,28 +68,17 @@ jobs:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 # name: Build and Deploy NGINX with Octopus
 
-# on:
+# on: 
 #   push:
 #     branches:
 #       - main
 
 # env:
-#   IMAGE_NAME: pyadav8821/nginx-octopus-demo
+#   IMAGE_NAME: pyadav8821/nginx-octopus
 #   OCTOPUS_SPACE: "Default"
-#   OCTOPUS_ENVIRONMENT: "Production"
+#   OCTOPUS_ENVIRONMENT: "Development"
 
 # jobs:
 #   build-push-deploy:
@@ -108,13 +104,87 @@ jobs:
 #           docker push $IMAGE_NAME:${{ github.sha }}
 #           docker push $IMAGE_NAME:latest
 
-#       - name: Create and Deploy Release in Octopus
+#       # Step 1️⃣ — Create Octopus release
+#       - name: Create Octopus Release
+#         id: create_release
 #         uses: OctopusDeploy/create-release-action@v3
 #         with:
 #           api_key: ${{ secrets.OCTOPUS_API_KEY }}
 #           server: ${{ secrets.OCTOPUS_SERVER }}
 #           space: ${{ env.OCTOPUS_SPACE }}
-#           project: ${{ env.OCTOPUS_PROJECT }}
-#           release_number: "1.${{ github.run_number }}"
+#           project: "nginx"
+#           release_number: ${{ github.run_id }}
 #           package_version: ${{ github.sha }}
-#           deploy_to: ${{ env.OCTOPUS_ENVIRONMENT }}
+#           # ignore_existing: true ensures new releases always work
+#           ignore_existing: true
+
+#       # Step 2️⃣ — Deploy the release
+#       - name: Deploy Release to Environment
+#         uses: OctopusDeploy/deploy-release-action@v3
+#         with:
+#           api_key: ${{ secrets.OCTOPUS_API_KEY }}
+#           server: ${{ secrets.OCTOPUS_SERVER }}
+#           space: ${{ env.OCTOPUS_SPACE }}
+#           project: ${{ env.OCTOPUS_PROJECT }}
+#           release_number: ${{ github.run_id }}
+#           environments: ${{ env.OCTOPUS_ENVIRONMENT }}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# # name: Build and Deploy NGINX with Octopus
+
+# # on:
+# #   push:
+# #     branches:
+# #       - main
+
+# # env:
+# #   IMAGE_NAME: pyadav8821/nginx-octopus-demo
+# #   OCTOPUS_SPACE: "Default"
+# #   OCTOPUS_ENVIRONMENT: "Production"
+
+# # jobs:
+# #   build-push-deploy:
+# #     runs-on: ubuntu-latest
+
+# #     steps:
+# #       - name: Checkout
+# #         uses: actions/checkout@v4
+
+# #       - name: Log in to Docker Hub
+# #         uses: docker/login-action@v3
+# #         with:
+# #           username: ${{ secrets.DOCKERHUB_USERNAME }}
+# #           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+# #       - name: Build Docker Image
+# #         run: |
+# #           docker build -t $IMAGE_NAME:${{ github.sha }} .
+# #           docker tag $IMAGE_NAME:${{ github.sha }} $IMAGE_NAME:latest
+
+# #       - name: Push Docker Image
+# #         run: |
+# #           docker push $IMAGE_NAME:${{ github.sha }}
+# #           docker push $IMAGE_NAME:latest
+
+# #       - name: Create and Deploy Release in Octopus
+# #         uses: OctopusDeploy/create-release-action@v3
+# #         with:
+# #           api_key: ${{ secrets.OCTOPUS_API_KEY }}
+# #           server: ${{ secrets.OCTOPUS_SERVER }}
+# #           space: ${{ env.OCTOPUS_SPACE }}
+# #           project: ${{ env.OCTOPUS_PROJECT }}
+# #           release_number: "1.${{ github.run_number }}"
+# #           package_version: ${{ github.sha }}
+# #           deploy_to: ${{ env.OCTOPUS_ENVIRONMENT }}
